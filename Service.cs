@@ -2,9 +2,9 @@
 
 public class Service
 {
-    public List<User> Users { get; set; }
-    public List<Equipment> Equipments { get; set; }
-    public List<Rental> Rentals { get; set; }
+    public List<User> Users { get; set; } = new();
+    public List<Equipment> Equipments { get; set; } = new();
+    public List<Rental> Rentals { get; set; } = new();
 
     public void Rent(string userId, string equipmentId)
     {
@@ -13,17 +13,20 @@ public class Service
         if (user == null || equipment == null)
         {
             Console.WriteLine("Błąd, nie znaleziono użytkownika lub sprzętu");
+            return;
         }
 
         if (!equipment.Available)
         {
             Console.WriteLine($"Błąd: {equipment.Name} jest obecnie wypożyczony.");
+            return;
         }
         
         int activeRent = Rentals.Count(r => r.User.Id == userId && r.ReturnDate == null);
-        if (activeRent > user.MaxRental)
+        if (activeRent >= user.MaxRental)
         {
             Console.WriteLine($"Błąd: Użytkownik {user.Name} przekroczył limit wypożyczonego sprzętu: ({user.MaxRental}).");
+            return;
         }
         
         var newRent = new Rental(user, equipment);
@@ -41,6 +44,7 @@ public class Service
         if (rental == null)
         {
             Console.WriteLine("Błąd: Nie znaleziono aktywnego wypożyczenia dla tego sprzętu.");
+            return;
         }
         rental.ReturnDate =  DateTime.Now;
         rental.Equipment.Available = true;
@@ -60,8 +64,10 @@ public class Service
     {
         foreach (var rental in Rentals)
         {
-            var status = rental.ReturnDate.HasValue ? $"Zwrócono: {rental.ReturnDate}" : "Wypożyczone";
-            Console.WriteLine($"Użytkownik: {rental.User.Name} {rental.User.LastName} wypożyczył: {rental.Equipment.Name}. Status to: {status} | Kara wynosi: {rental.Penalty()} PLN");
+            var status = rental.ReturnDate.HasValue ? 
+                $"zwrócono dnia: {rental.ReturnDate}" 
+                : $"wypożyczone, termin zwrotu to : {rental.RentalEndDate}";
+            Console.WriteLine($"Użytkownik: {rental.User.Name} {rental.User.LastName} wypożyczył: {rental.Equipment.Name}. Status: {status} | Kara wynosi: {rental.Penalty()} PLN");
         }
     }
     
