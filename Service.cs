@@ -56,4 +56,13 @@ public class Service
         }
     }
     
+    public void DisplayRentals()
+    {
+        foreach (var rental in Rentals)
+        {
+            var status = rental.ReturnDate.HasValue ? $"Zwrócono: {rental.ReturnDate}" : "Wypożyczone";
+            Console.WriteLine($"Użytkownik: {rental.User.Name} {rental.User.LastName} wypożyczył: {rental.Equipment.Name}. Status to: {status} | Kara wynosi: {rental.Penalty()} PLN");
+        }
+    }
+    
 }
