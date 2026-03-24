@@ -6,7 +6,7 @@ public class Rental
     public User User { get; private set; }
     public Equipment Equipment { get; private set; }
     public DateTime RentalDate { get; private set; }
-    public DateTime RentalEndDate { get; private set; }
+    public DateTime RentalEndDate { get; set; }
     public DateTime? ReturnDate { get; set; }
     
     public Rental(User user, Equipment equipment)

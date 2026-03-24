@@ -22,14 +22,31 @@ public class Program
         service.Equipments.Add(c1);
         service.Equipments.Add(p1);
         
+        Console.WriteLine("Dostępny sprzęt: ");
+        service.DisplayAvailableEquipment();
+        
+        Console.WriteLine("\nCzy jakieś urządzenie w serwisie?");
+        service.SetEquipmentOutOfService(p1.Id);
+        service.DisplayUserActiveRentals(s1.Id);
+        
         service.Rent(s1.Id, l1.Id); 
         service.Rent(s1.Id, l2.Id); 
         service.Rent(s1.Id, c1.Id); 
         
         service.Rent(e1.Id, l1.Id);
         
+        
+        
+        Console.WriteLine("\nZwroty:");
         service.Return(l1.Id);       
-        service.Rent(e1.Id, l1.Id);
+        
+        var rentalToLate = service.Rentals.Find(r => r.Equipment.Id == l2.Id && r.ReturnDate == null);
+        if (rentalToLate != null) {
+            rentalToLate.RentalEndDate = DateTime.Now.AddDays(-5); 
+        }
+        Console.WriteLine("\nTest kary dla spóźnienia: ");
+        service.DisplayOverdueRentals();
+        service.Return(l2.Id);
         
         service.DisplayRentals();
     }

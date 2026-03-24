@@ -71,4 +71,72 @@ public class Service
         }
     }
     
+    public void DisplayAvailableEquipment()
+    {
+        bool found = false;
+
+        foreach (var equipment in Equipments)
+        {
+            if (equipment.Available)
+            {
+                Console.WriteLine($"- {equipment.Name} (ID: {equipment.Id})");
+                found = true;
+            }
+        }
+
+        if (!found)
+        {
+            Console.WriteLine("Brak dostępnego sprzętu w tej chwili.");
+        }
+    }
+    
+    public void SetEquipmentOutOfService(string equipmentId)
+    {
+        var equipment = Equipments.FirstOrDefault(e => e.Id == equipmentId);
+        if (equipment != null)
+        {
+            equipment.Available = false;
+            Console.WriteLine($"Sprzęt {equipment.Name} został wyłączony z użytku (serwis/uszkodzenie).");
+        }
+    }
+    
+    public void DisplayUserActiveRentals(string userId)
+    {
+        Console.WriteLine($"\nAktualne urządzenia użytkownika {userId} ");
+        int count = 0;
+
+        foreach (var r in Rentals)
+        {
+            if (r.User.Id == userId && r.ReturnDate == null)
+            {
+                Console.WriteLine($"- {r.Equipment.Name} (Termin: {r.RentalEndDate})");
+                count++;
+            }
+        }
+
+        if (count == 0)
+        {
+            Console.WriteLine("Ten użytkownik nie posiada obecnie żadnych wypożyczeń.");
+        }
+    }
+    
+    public void DisplayOverdueRentals()
+    {
+        int overdueCount = 0;
+
+        foreach (var r in Rentals)
+        {
+            
+            if (r.ReturnDate == null && DateTime.Now > r.RentalEndDate)
+            {
+                Console.WriteLine($"- {r.User.Name}: {r.Equipment.Name} (Powinien wrócić: {r.RentalEndDate})");
+                overdueCount++;
+            }
+        }
+
+        if (overdueCount == 0)
+        {
+            Console.WriteLine("Brak spóźnień w systemie.");
+        }
+    }
 }
